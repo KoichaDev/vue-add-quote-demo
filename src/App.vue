@@ -2,10 +2,7 @@
 	<div class="container">
 		<h1>Quote Added</h1>
 
-		<label class="progress__label" for="progress">{{ quotes.length }} / 10 </label>
-		<progress id="progress" max="10" v-bind:value="quotes.length">
-			{{ quotes.length }}
-		</progress>
+		<ProgressBar :quotes="quotes" :errorMessage="errorMessage" />
 
 		<form @submit.prevent="submit">
 			<div class="form">
@@ -32,12 +29,18 @@
 </template>
 
 <script>
+import ProgressBar from './components/ProgressBar.vue';
+
 export default {
 	data() {
 		return {
 			quoteText: '',
+			errorMessage: '',
 			quotes: [],
 		};
+	},
+	components: {
+		ProgressBar,
 	},
 	methods: {
 		deleteQuote(indexPosition) {
@@ -48,6 +51,19 @@ export default {
 			this.quoteText = enteredText;
 		},
 		submit() {
+			if (this.quoteText === '') {
+				return (this.errorMessage = 'Please enter a quote');
+			}
+
+			if (this.quotes.length >= 10) {
+				return (this.errorMessage =
+					'You have reached the maximum number of quotes! Please delete one before adding another.');
+			}
+
+			if (this.quotes.length <= 10) {
+				this.errorMessage = '';
+			}
+
 			this.quotes.push(this.quoteText);
 			this.quoteText = '';
 		},
