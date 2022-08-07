@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<p style="color: red">{{ quotes.length === 10 ? errorMessage : '' }}</p>
+		<p style="color: red">{{ errorMessage }}</p>
 
-		<label class="progress__label" for="progress">{{ quotes.length }} / 10 </label>
+		<label class="progress__label" for="progress">{{ quotes.length }} / {{ maxQuotes }} </label>
 		<progress id="progress" max="10" v-bind:value="quotes.length">
 			{{ quotes.length }}
 		</progress>
@@ -11,7 +11,7 @@
 
 <script>
 export default {
-	props: ['quotes', 'errorMessage'],
+	props: ['quotes', 'maxQuotes', 'errorMessage'],
 };
 </script>
 

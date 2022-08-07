@@ -2,70 +2,50 @@
 	<div class="container">
 		<h1>Quote Added</h1>
 
-		<ProgressBar :quotes="quotes" :errorMessage="errorMessage" />
+		<progress-bar :quotes="quotes" :maxQuotes="maxQuotes" :errorMessage="errorMessage" />
 
-		<form @submit.prevent="submit">
-			<div class="form">
-				<label for="quote">Quote</label>
-				<textarea
-					id="quote"
-					cols="30"
-					rows="10"
-					v-bind:value="quoteText"
-					@change="enteredQuote"
-				></textarea>
-			</div>
-			<button type="submit">Add Quote</button>
-		</form>
+		<add-quote @add-quote="addQuote" />
 		<hr />
-		<div>
-			<p>JSON Stringify:</p>
-			<pre>{{ JSON.stringify(quotes) }}</pre>
-		</div>
-		<p v-bind:key="index" v-for="(quote, index) in quotes" @click="deleteQuote(index)">
-			{{ quote }}
-		</p>
+
+		<view-quotes :quotes="quotes" @delete-quote="deleteQuote" />
 	</div>
 </template>
 
 <script>
-import ProgressBar from './components/ProgressBar.vue';
+import ProgressBarQuote from './components/ProgressBarQuote.vue';
+import AddQuote from './components/AddQuote.vue';
+import ViewQuotes from './components/ViewQuotes.vue';
 
 export default {
 	data() {
 		return {
-			quoteText: '',
 			errorMessage: '',
 			quotes: [],
+			maxQuotes: 10,
 		};
 	},
 	components: {
-		ProgressBar,
+		'progress-bar': ProgressBarQuote,
+		'add-quote': AddQuote,
+		'view-quotes': ViewQuotes,
 	},
 	methods: {
-		deleteQuote(indexPosition) {
-			this.quotes.splice(indexPosition, 1);
+		deleteQuote(index) {
+			console.log(index);
+			this.quotes.splice(index, 1);
+			this.errorMessage = '';
 		},
-		enteredQuote(e) {
-			const enteredText = e.target.value;
-			this.quoteText = enteredText;
-		},
-		submit() {
-			if (this.quoteText === '') {
+		addQuote(value) {
+			if (value === '') {
 				return (this.errorMessage = 'Please enter a quote');
 			}
 
-			if (this.quotes.length >= 10) {
+			if (this.quotes.length === this.maxQuotes) {
 				return (this.errorMessage =
 					'You have reached the maximum number of quotes! Please delete one before adding another.');
 			}
 
-			if (this.quotes.length <= 10) {
-				this.errorMessage = '';
-			}
-
-			this.quotes.push(this.quoteText);
-			this.quoteText = '';
+			this.quotes.push(value);
 		},
 	},
 };
@@ -75,9 +55,5 @@ export default {
 progress {
 	width: 100%;
 	height: 2em;
-}
-.form {
-	display: flex;
-	flex-direction: column;
 }
 </style>
